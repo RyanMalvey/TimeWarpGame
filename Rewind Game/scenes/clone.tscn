@@ -1,0 +1,362 @@
+[gd_scene format=3 uid="uid://ctecb2hh8x6iq"]
+
+[ext_resource type="Texture2D" uid="uid://dq7mch6qyglcx" path="res://assets/Test Assets/sprites/knight.png" id="1_ypstt"]
+
+[sub_resource type="GDScript" id="GDScript_ypstt"]
+script/source = "extends CharacterBody2D
+
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var arm_sensor: Area2D = $ArmSensor
+
+# --- Movement tuning (match your player) ---
+@export var speed: float = 120.0
+@export var jump_velocity: float = -250.0
+@export var gravity: float = float(ProjectSettings.get_setting(\"physics/2d/default_gravity\"))
+
+# --- Playback tuning ---
+@export var playback_speed: float = 1.0
+
+# Collision arming setup (your approach: disable layer 1 at spawn, enable after separation)
+@export var clone_layer_bit: int = 1
+@export var player_layer_bit: int = 2
+@export var separation_confirm_time: float = 0.08
+
+# End behavior
+@export var linger_time: float = 1.0
+
+# Frames: each should have { pos, rot, vel?, extra:{axis,jump} }
+var _frames: Array[Dictionary] = []
+var _tick: int = 0
+var _accum: float = 0.0
+
+var _alive: bool = true
+var _player: Node2D = null
+
+# overlap-based arming
+var _overlapping_player: bool = true
+var _armed_player_collision: bool = false
+var _separated_time: float = 0.0
+
+func _ready() -> void:
+	add_to_group(\"time_targets\")
+	arm_sensor.body_entered.connect(_on_arm_body_entered)
+	arm_sensor.body_exited.connect(_on_arm_body_exited)
+
+func init_with_frames(frames: Array[Dictionary], player_ref: Node2D) -> void:
+	_frames = frames.duplicate(true)
+	_tick = 0
+	_accum = 0.0
+	_player = player_ref
+
+	# Spawn at first frame pos/rot if present
+	if _frames.size() > 0:
+		var f0: Dictionary = _frames[0]
+		if f0.has(\"pos\"):
+			global_position = f0[\"pos\"]
+		if f0.has(\"rot\"):
+			rotation = float(f0[\"rot\"])
+		if f0.has(\"vel\") and typeof(f0[\"vel\"]) == TYPE_VECTOR2:
+			velocity = f0[\"vel\"]
+
+	# Start non-solid so we don't push/drag during initial overlap
+	_overlapping_player = true
+	_armed_player_collision = false
+	_separated_time = 0.0
+
+	# Make clone intangible by removing its collision layer 1 initially
+	set_collision_layer_value(clone_layer_bit, false)
+	# Also ensure it won't collide with player until armed (optional but safe)
+	set_collision_mask_value(player_layer_bit, false)
+
+func kill_player() -> void:
+	if not _alive:
+		return
+	_alive = false
+	queue_free()
+
+func _physics_process(delta: float) -> void:
+	if not _alive:
+		return
+
+	if _frames.size() < 2:
+		_fade_and_die()
+		return
+
+	# Track stable separation time before arming collisions
+	if _overlapping_player:
+		_separated_time = 0.0
+	else:
+		_separated_time += delta
+
+	if (not _armed_player_collision) and (_player != null) and (_separated_time >= separation_confirm_time):
+		# Become solid again
+		set_collision_layer_value(clone_layer_bit, true)
+		set_collision_mask_value(player_layer_bit, true)
+		_armed_player_collision = true
+
+	# Advance \"replay clock\" at playback_speed, but simulate as physics ticks
+	var step: float = 1.0 / float(Engine.physics_ticks_per_second)
+	_accum += delta * playback_speed
+
+	while _accum >= step:
+		_accum -= step
+
+		# Consume one recorded tick of intent
+		if _tick >= _frames.size():
+			_fade_and_die()
+			return
+
+		var frame: Dictionary = _frames[_tick]
+		_tick += 1
+
+		_apply_intent_tick(frame, step)
+
+func _apply_intent_tick(frame: Dictionary, dt: float) -> void:
+	# Intent (axis/jump)
+	var extra: Dictionary = frame.get(\"extra\", {})
+	var axis: float = float(extra.get(\"axis\", 0.0))
+	var jump: bool = bool(extra.get(\"jump\", false))
+
+	# Gravity
+	if not is_on_floor():
+		velocity.y += gravity * dt
+	else:
+		# optional: prevent tiny sinking
+		velocity.y = min(velocity.y, 0.0)
+
+	# Jump (re-simulated, so external boosts can change outcome)
+	if jump and is_on_floor():
+		velocity.y = jump_velocity
+
+	# Horizontal velocity driven by recorded axis
+	velocity.x = axis * speed
+
+	# Visuals
+	_update_anim(axis)
+
+	# Move with collisions; this is what allows the player/world to alter the clone
+	move_and_slide()
+
+func _update_anim(axis: float) -> void:
+	if axis > 0.0:
+		sprite.flip_h = false
+	elif axis < 0.0:
+		sprite.flip_h = true
+
+	if not is_on_floor():
+		sprite.play(\"jump\")
+	else:
+		if abs(axis) < 0.01:
+			sprite.play(\"idle\")
+		else:
+			sprite.play(\"run\")
+
+func _on_arm_body_entered(body: Node) -> void:
+	if body == _player:
+		_overlapping_player = true
+
+func _on_arm_body_exited(body: Node) -> void:
+	if body == _player:
+		_overlapping_player = false
+
+func _fade_and_die() -> void:
+	set_physics_process(false)
+
+	if sprite != null:
+		var tw := create_tween()
+		tw.tween_property(sprite, \"modulate:a\", 0.0, linger_time)
+		tw.tween_callback(Callable(self, \"queue_free\"))
+	else:
+		await get_tree().create_timer(linger_time).timeout
+		queue_free()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3xv3"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y274m"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d3f"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvj3x"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xjhie"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(64, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5teb"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdxhf"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okxg1"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dh6ed"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wh6oi"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(128, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wbc22"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2h462"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(192, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c0tq"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(224, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7jshj"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7ydc"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nlvmv"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_55a70"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hmapi"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmiqx"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tck03"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(192, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5p3ui"]
+atlas = ExtResource("1_ypstt")
+region = Rect2(224, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rbuo6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3xv3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y274m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78d3f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvj3x")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xjhie")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d5teb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdxhf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_okxg1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dh6ed")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wh6oi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wbc22")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2h462")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5c0tq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7jshj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7ydc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nlvmv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_55a70")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hmapi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmiqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tck03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5p3ui")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_51lvd"]
+size = Vector2(10, 18)
+
+[node name="PlayerClone" type="CharacterBody2D" unique_id=1861048898]
+collision_layer = 0
+script = SubResource("GDScript_ypstt")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=843667155]
+position = Vector2(0, -12)
+sprite_frames = SubResource("SpriteFrames_rbuo6")
+animation = &"jump"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=470455972]
+position = Vector2(0, -9)
+shape = SubResource("RectangleShape2D_51lvd")
+
+[node name="ArmSensor" type="Area2D" parent="." unique_id=2113411984]
+collision_layer = 128
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArmSensor" unique_id=1783812758]
+position = Vector2(0, -9)
+shape = SubResource("RectangleShape2D_51lvd")
