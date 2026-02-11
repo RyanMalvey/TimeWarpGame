@@ -4,7 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://ci0mj3daomfq6" path="res://scenes/player.tscn" id="1_sel5b"]
 [ext_resource type="Script" uid="uid://guwtintgohdt" path="res://scripts/player.gd" id="2_wpk13"]
 [ext_resource type="PackedScene" uid="uid://dull3ca1bn66f" path="res://scenes/platform.tscn" id="4_8pwlu"]
+[ext_resource type="Script" uid="uid://dfsx73hnatk1s" path="res://scripts/PlayerRewindable2D.gd" id="4_kvuet"]
 [ext_resource type="PackedScene" uid="uid://buekiqeclextb" path="res://scenes/coin.tscn" id="5_5xvvq"]
+[ext_resource type="Script" uid="uid://bkpde2oob5qqr" path="res://scripts/CloneTrailController.gd" id="5_dinhu"]
+[ext_resource type="PackedScene" uid="uid://lcs5pfmdrg04" path="res://scenes/PlayerClone.tscn" id="6_kvuet"]
 [ext_resource type="PackedScene" uid="uid://ctc0t0hgnnlk2" path="res://scenes/killzone.tscn" id="6_lc50h"]
 [ext_resource type="PackedScene" uid="uid://byo7n4v8ti888" path="res://scenes/slime.tscn" id="7_h3ktc"]
 [ext_resource type="Script" uid="uid://basdu16bgvix7" path="res://scripts/RewindablePlatform.gd" id="8_0tnpc"]
@@ -241,13 +244,13 @@ limit_bottom = 120
 limit_smoothed = true
 position_smoothing_enabled = true
 
-[node name="Timer" type="Timer" parent="Player" unique_id=2117895713]
-wait_time = 3.0
-one_shot = true
-autostart = true
+[node name="PlayerRewindable" type="Node" parent="Player" unique_id=1581486224]
+script = ExtResource("4_kvuet")
 
-[node name="Rewindable" type="Node" parent="Player" unique_id=1581486224]
-script = ExtResource("8_gee14")
+[node name="CloneTrailController" type="Node" parent="Player" unique_id=1094675284]
+script = ExtResource("5_dinhu")
+clone_scene = ExtResource("6_kvuet")
+rewindable_path = NodePath("../PlayerRewindable")
 
 [node name="Killzone" parent="." unique_id=1095924984 instance=ExtResource("6_lc50h")]
 position = Vector2(0, 150)
@@ -333,5 +336,3 @@ theme_override_styles/background = SubResource("StyleBoxFlat_vtaks")
 theme_override_styles/fill = SubResource("StyleBoxFlat_kvpfn")
 max_value = 1.0
 value = 1.0
-
-[connection signal="timeout" from="Player/Timer" to="Player" method="_on_timer_timeout"]

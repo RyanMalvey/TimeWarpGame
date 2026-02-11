@@ -1,4 +1,5 @@
 extends Node
+class_name Rewindable2D
 
 @export var target_path: NodePath = NodePath("..")
 @export var record_velocity: bool = true
@@ -42,11 +43,14 @@ func apply_extra(_state: Dictionary) -> void:
 	pass
 # ------------------------------------------------------------------
 
+# NEW: Optional hook. PlayerRewindable2D uses this to collect rewound frames.
+func _on_rewind_frame_popped(_frame: Dictionary) -> void:
+	pass
+
 func record_step(max_frames: int) -> void:
 	if _target == null:
 		return
 
-	# Keep buffer at max_frames
 	while _frames.size() >= max_frames:
 		_frames.pop_front()
 
@@ -82,26 +86,21 @@ func rewind_step(delta: float, speed: float) -> void:
 	if _target == null:
 		return
 
-	# Nothing to rewind
 	if _frames.is_empty() and not _has_segment:
 		return
 
 	var step: float = 1.0 / float(Engine.physics_ticks_per_second)
 
-	# Initialize segment if needed
 	if not _has_segment:
 		_begin_segment()
 
-	# Advance "rewind time"
 	_accum += delta * speed
 
-	# Interpolate within the current segment every tick (smooth!)
 	var t: float = clampf(_accum / step, 0.0, 1.0)
 
 	_target.global_position = _from_pos.lerp(_to_pos, t)
 	_target.rotation = lerp_angle(_from_rot, _to_rot, t)
 
-	# Velocity interpolation (optional)
 	if record_velocity:
 		var v: Vector2 = _from_vel.lerp(_to_vel, t)
 		if _target is CharacterBody2D:
@@ -109,10 +108,8 @@ func rewind_step(delta: float, speed: float) -> void:
 		elif _target is RigidBody2D:
 			(_target as RigidBody2D).linear_velocity = v
 
-	# Apply any extra state (not interpolated; last popped frame is applied)
 	apply_extra(_current_extra)
 
-	# Consume next segment when step elapsed
 	if _accum >= step:
 		_accum -= step
 		_from_pos = _to_pos
@@ -139,6 +136,9 @@ func _begin_segment() -> void:
 
 func _pop_next_to() -> void:
 	var frame: Dictionary = _frames.pop_back()
+
+	# NEW: allow subclasses to collect what got popped during rewind
+	_on_rewind_frame_popped(frame)
 
 	_to_pos = frame.get("pos", _from_pos)
 	_to_rot = frame.get("rot", _from_rot)
