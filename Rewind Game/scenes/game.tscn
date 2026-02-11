@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://byo7n4v8ti888" path="res://scenes/slime.tscn" id="7_h3ktc"]
 [ext_resource type="Script" uid="uid://basdu16bgvix7" path="res://scripts/RewindablePlatform.gd" id="8_0tnpc"]
 [ext_resource type="Script" uid="uid://dmtutdulfaaf6" path="res://scripts/Rewindable2D.gd" id="8_gee14"]
+[ext_resource type="Script" uid="uid://c8awhj6bsugt0" path="res://scripts/Hud.gd" id="10_vtaks"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dst88"]
 texture = ExtResource("1_65h52")
@@ -216,6 +217,11 @@ _data = {
 &"move": SubResource("Animation_0pn0c")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vtaks"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kvpfn"]
+bg_color = Color(0.12941177, 1, 0.105882354, 1)
+
 [node name="Game" type="Node2D" unique_id=884657423]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1691502672]
@@ -301,5 +307,31 @@ position = Vector2(-200, 4)
 
 [node name="Rewindable" type="Node" parent="Enemies/Slime" unique_id=857165723]
 script = ExtResource("8_gee14")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1908233548]
+script = ExtResource("10_vtaks")
+
+[node name="UI" type="Control" parent="CanvasLayer" unique_id=1663444432]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RewindBar" type="ProgressBar" parent="CanvasLayer/UI" unique_id=1635160386]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -68.0
+offset_right = 220.0
+offset_bottom = -18.0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_vtaks")
+theme_override_styles/fill = SubResource("StyleBoxFlat_kvpfn")
+max_value = 1.0
+value = 1.0
 
 [connection signal="timeout" from="Player/Timer" to="Player" method="_on_timer_timeout"]
