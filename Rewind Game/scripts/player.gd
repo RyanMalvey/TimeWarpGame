@@ -8,8 +8,21 @@ const JUMP_VELOCITY = -300.0
 var alive := true
 var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
 
+func _ready() -> void:
+	# Connect to the rewind start signal so we can become a 'ghost' again
+	if not RewindManager.rewind_started.is_connected(_on_rewind_started):
+		RewindManager.rewind_started.connect(_on_rewind_started)
+
+func _on_rewind_started() -> void:
+	# Disable collision with clones (Layer 3) immediately when rewinding starts
+	# This prevents the 'pushing' glitch when the new clone spawns
+	set_collision_mask_value(3, false)
+
 func kill_player() -> void:
 	alive = false
+	# Ensure collision is reset for next respawn
+	set_collision_mask_value(3, false)
+	
 	# Safety: if you die during rewind, stop it so things resume cleanly
 	if RewindManager.is_rewinding:
 		RewindManager.stop_rewind()

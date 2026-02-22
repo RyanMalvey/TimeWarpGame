@@ -4,8 +4,6 @@ extends AnimatableBody2D
 
 @export var anim_name: StringName = "move"
 @export var forward_speed: float = 1.0
-
-# Optional: per-platform multiplier (1.0 = same as global, 0.5 = half of global, etc.)
 @export var rewind_speed_multiplier: float = 1.0
 
 var _was_rewinding := false
@@ -20,7 +18,8 @@ func _physics_process(_delta: float) -> void:
 
 	if rw != _was_rewinding:
 		if rw:
-			anim.speed_scale = -RewindManager.rewind_speed * rewind_speed_multiplier
+			# Use the ANIMATION-specific rewind speed (not the buffered-history scrub speed)
+			anim.speed_scale = -absf(forward_speed) * RewindManager.anim_rewind_speed * rewind_speed_multiplier
 			if not anim.is_playing():
 				anim.play()
 		else:

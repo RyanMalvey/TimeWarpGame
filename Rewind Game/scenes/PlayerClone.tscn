@@ -172,14 +172,23 @@ animations = [{
 size = Vector2(10, 18)
 
 [node name="PlayerClone" type="CharacterBody2D" unique_id=2031172746]
+collision_layer = 4
 script = ExtResource("1_sseb4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1150642938]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_fswum")
-animation = &"jump"
+animation = &"run"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1008312342]
+position = Vector2(0, -9)
+shape = SubResource("RectangleShape2D_ngjh0")
+
+[node name="ClearDetector" type="Area2D" parent="." unique_id=2068469652]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClearDetector" unique_id=1602508370]
 position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_ngjh0")
