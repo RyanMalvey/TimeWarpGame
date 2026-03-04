@@ -15,8 +15,8 @@ func _on_rewind_stopped() -> void:
 	var player := get_node_or_null(player_path) as CharacterBody2D
 	if player == null: return
 	
-	# RESET PLAYER MASK HERE - Essential safety step
-	player.set_collision_mask_value(3, false)
+	# REMOVE OR COMMENT OUT THIS LINE:
+	# player.set_collision_mask_value(3, false)
 
 	var rewindable := get_node_or_null(rewindable_path) as PlayerRewindable2D
 	if rewindable == null: return
@@ -45,8 +45,3 @@ func _on_rewind_stopped() -> void:
 
 	if clone.has_method("setup_replay"):
 		clone.setup_replay(inputs, initial_vel, flip_h)
-
-	if clone.has_signal("cleared_player"):
-		clone.cleared_player.connect(func():
-			player.set_collision_mask_value(3, true)
-		)

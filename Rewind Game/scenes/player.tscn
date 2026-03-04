@@ -1,104 +1,10 @@
 [gd_scene format=3 uid="uid://ci0mj3daomfq6"]
 
 [ext_resource type="Texture2D" uid="uid://dq7mch6qyglcx" path="res://assets/Test Assets/sprites/knight.png" id="1_i6rhv"]
-
-[sub_resource type="GDScript" id="GDScript_h5hpx"]
-script/source = "extends CharacterBody2D
-
-
-const SPEED = 150.0
-const JUMP_VELOCITY = -300.0
-@onready var sprite = $AnimatedSprite2D
-@onready var playerCollider = $CollisionShape2D
-@onready var cooldownTimer = $Timer
-
-var alive = true
-
-var rewinding = false
-var rewind_ready = false
-var rewind_duration = 3.0
-var rewind_values = {
-	\"position\": [],
-	\"rotation\": [],
-	\"velocity\": [],
-}
-
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting(\"physics/2d/default_gravity\")
-
-func kill_player():
-	alive = false
-
-func _physics_process(delta):
-	if(alive):
-		if(!rewinding && !rewind_ready && cooldownTimer.is_stopped()):
-			cooldownTimer.start()
-		if(Input.is_action_pressed(\"rewind\") && rewind_ready):
-			rewinding = true
-		elif(Input.is_action_pressed(\"rewind\") && !rewind_ready):
-			print(\"Can't rewind right now.\")
-		else:
-			rewinding = false
-			
-		if(!rewinding):
-			if(rewind_duration * Engine.physics_ticks_per_second == rewind_values[\"position\"].size()):
-				for key in rewind_values.keys():
-					rewind_values[key].pop_front()
-			rewind_values[\"position\"].append(global_position)
-			rewind_values[\"rotation\"].append(rotation)
-			rewind_values[\"velocity\"].append(velocity)
-			move_player(delta)
-		else:
-			rewind(delta)
-	
-func rewind(delta):
-	print(\"Rewinding!\")
-	var pos = rewind_values[\"position\"].pop_back()
-	var rot = rewind_values[\"rotation\"].pop_back()
-	if(rewind_values[\"position\"].size()==0):
-		playerCollider.set_deferred(\"disabled\", false)
-		rewinding = false
-		rewind_ready = false
-		global_position = pos
-		rotation = rot
-		velocity = rewind_values[\"velocity\"][0]
-		return
-	rotation = rot
-	global_position = pos
-	
-func move_player(delta):
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y += gravity * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed(\"jump\") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction = Input.get_axis(\"move_left\", \"move_right\")
-	
-	if direction > 0:
-		sprite.flip_h = false
-	elif direction < 0:
-		sprite.flip_h = true
-	
-	if is_on_floor():
-		if(direction == 0):
-			sprite.play(\"idle\")
-		else:
-			sprite.play(\"run\")
-	else:
-		sprite.play(\"jump\")
-	
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
-	move_and_slide()
-"
+[ext_resource type="Script" uid="uid://guwtintgohdt" path="res://scripts/player.gd" id="1_qlg0r"]
+[ext_resource type="Script" uid="uid://dfsx73hnatk1s" path="res://scripts/PlayerRewindable2D.gd" id="2_dqkch"]
+[ext_resource type="Script" uid="uid://bkpde2oob5qqr" path="res://scripts/CloneTrailController.gd" id="3_qlg0r"]
+[ext_resource type="PackedScene" uid="uid://lcs5pfmdrg04" path="res://scenes/PlayerClone.tscn" id="4_tuyoq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t3xv3"]
 atlas = ExtResource("1_i6rhv")
@@ -268,17 +174,37 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_se8aw"]
 size = Vector2(10, 18)
 
-[node name="Player" type="CharacterBody2D" unique_id=1355783099]
+[node name="Player" type="CharacterBody2D" unique_id=1355783099 groups=["Players"]]
 z_index = 10
 collision_layer = 2
-script = SubResource("GDScript_h5hpx")
+collision_mask = 5
+floor_constant_speed = true
+floor_snap_length = 10.0
+platform_on_leave = 1
+script = ExtResource("1_qlg0r")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=217130320]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_s75gc")
-animation = &"jump"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=460695295]
 position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_se8aw")
+one_way_collision = true
+one_way_collision_margin = 2.0
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=439995849]
+zoom = Vector2(4, 4)
+limit_bottom = 120
+limit_smoothed = true
+position_smoothing_enabled = true
+
+[node name="PlayerRewindable" type="Node" parent="." unique_id=1139918410]
+script = ExtResource("2_dqkch")
+
+[node name="CloneTrailController" type="Node" parent="." unique_id=1176482324]
+script = ExtResource("3_qlg0r")
+clone_scene = ExtResource("4_tuyoq")
+rewindable_path = NodePath("../PlayerRewindable")

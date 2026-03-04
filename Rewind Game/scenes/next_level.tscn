@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://hxox13rejaim"]
+
+[ext_resource type="Texture2D" uid="uid://dt103bomulhmb" path="res://icon.svg" id="1_rf0ph"]
+[ext_resource type="Script" uid="uid://bspylni6mi51l" path="res://scripts/next_level.gd" id="1_sd4vo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sd4vo"]
+size = Vector2(11.75, 12)
+
+[node name="NextLevel" type="Area2D" unique_id=1638927057]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_sd4vo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1765302068]
+position = Vector2(0, 5.9604645e-08)
+scale = Vector2(0.08984375, 0.08984375)
+texture = ExtResource("1_rf0ph")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1865375507]
+position = Vector2(0.125, 0)
+shape = SubResource("RectangleShape2D_sd4vo")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
