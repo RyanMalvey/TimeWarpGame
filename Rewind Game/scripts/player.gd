@@ -22,6 +22,12 @@ func kill_player() -> void:
 	if RewindManager.is_rewinding:
 		RewindManager.stop_rewind()
 
+func get_lever_push_direction() -> float:
+	if not alive or RewindManager.is_rewinding:
+		return 0.0
+
+	return Input.get_axis("move_left", "move_right")
+
 func _physics_process(delta: float) -> void:
 	if not alive or RewindManager.is_rewinding:
 		return
@@ -43,8 +49,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _handle_animations(direction: float) -> void:
-	if direction > 0: sprite.flip_h = false
-	elif direction < 0: sprite.flip_h = true
+	if direction > 0:
+		sprite.flip_h = false
+	elif direction < 0:
+		sprite.flip_h = true
 
 	if is_on_floor():
 		sprite.play("idle" if direction == 0 else "run")

@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://gxwuwnnxcx47"]
+
+[ext_resource type="Script" uid="uid://b4jog8t6hnikq" path="res://scripts/button_switch.gd" id="1_rvuq1"]
+
+[sub_resource type="Animation" id="Animation_rvuq1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Top:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_aemor"]
+resource_name = "pressed"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Top:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 2)]
+}
+
+[sub_resource type="Animation" id="Animation_aague"]
+resource_name = "unpressed"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Top:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 2), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_i52pq"]
+_data = {
+&"RESET": SubResource("Animation_rvuq1"),
+&"pressed": SubResource("Animation_aemor"),
+&"unpressed": SubResource("Animation_aague")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8dk0i"]
+size = Vector2(30, 3.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aemor"]
+size = Vector2(30, 3)
+
+[node name="ButtonSwitch" type="Node2D" unique_id=1708443771]
+script = ExtResource("1_rvuq1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2044612575]
+libraries/ = SubResource("AnimationLibrary_i52pq")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=281240345]
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=279126687]
+position = Vector2(0, -6.75)
+shape = SubResource("RectangleShape2D_8dk0i")
+
+[node name="Top" type="StaticBody2D" parent="." unique_id=652784252]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Top" unique_id=455620630]
+position = Vector2(0, -6.5)
+shape = SubResource("RectangleShape2D_aemor")
+
+[node name="ColorFill" type="Polygon2D" parent="Top" unique_id=1484231682]
+position = Vector2(-4.7683716e-07, 0)
+scale = Vector2(0.9375, 1)
+polygon = PackedVector2Array(-16, -8, 16, -8, 16, -5, -16, -5)
+
+[node name="Base" type="StaticBody2D" parent="." unique_id=905415921]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base" unique_id=941265248]
+polygon = PackedVector2Array(-15, -8, -23, 0, 23, 0, 15, -8, 15, -5, -15, -5)
+
+[node name="Base" type="Polygon2D" parent="Base" unique_id=1916580997]
+position = Vector2(-0.43243313, 0)
+scale = Vector2(0.8648648, 1)
+color = Color(0.22190201, 0.22190201, 0.22190201, 1)
+polygon = PackedVector2Array(-26.09375, 0, 27.09375, 0, 17.84375, -7.9999995, 17.84375, -4.9999995, -16.84375, -4.9999995, -16.84375, -7.9999995)
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

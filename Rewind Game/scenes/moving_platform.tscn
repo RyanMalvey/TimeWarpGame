@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b385my0vvols8"]
+
+[ext_resource type="Script" uid="uid://dn7idenicqhpa" path="res://scripts/moving_platform.gd" id="1_ms375"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qk4kv"]
+size = Vector2(32, 8)
+
+[node name="MovingPlatform" type="AnimatableBody2D" unique_id=868779812]
+script = ExtResource("1_ms375")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=610564069]
+shape = SubResource("RectangleShape2D_qk4kv")
+one_way_collision = true
+
+[node name="ColorFill" type="Polygon2D" parent="." unique_id=1326054589]
+polygon = PackedVector2Array(-16, -4, 16, -4, 16, 4, -16, 4)

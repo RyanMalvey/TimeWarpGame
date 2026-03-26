@@ -14,22 +14,33 @@ var _replay_done: bool = false
 var _linger_t: float = 0.0
 var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
 
+# NEW: current replayed horizontal input, used by lever pushing
+var _current_axis: float = 0.0
+
 func setup_replay(inputs: Array[Dictionary], initial_velocity: Vector2, initial_flip_h: bool) -> void:
 	_inputs = inputs
 	_i = 0
 	_replay_done = false
 	_linger_t = 0.0
+	_current_axis = 0.0
 	velocity = initial_velocity
 
-	# All layer/mask logic has been removed. 
+	# All layer/mask logic has been removed.
 	# Please set Layer 3 and Masks 1 & 2 in the Inspector.
 
 	if sprite:
 		sprite.flip_h = initial_flip_h
 
+func get_lever_push_direction() -> float:
+	if not alive or _replay_done:
+		return 0.0
+
+	return _current_axis
+
 func _physics_process(delta: float) -> void:
-	if not alive: return
-	
+	if not alive:
+		return
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
@@ -37,6 +48,7 @@ func _physics_process(delta: float) -> void:
 		_step_replay_inputs()
 	else:
 		_linger_t += delta
+		_current_axis = 0.0
 		velocity.x = move_toward(velocity.x, 0.0, SPEED)
 		if _linger_t >= linger_after_replay:
 			queue_free()
@@ -47,21 +59,26 @@ func _physics_process(delta: float) -> void:
 func _step_replay_inputs() -> void:
 	if _i >= _inputs.size():
 		_replay_done = true
+		_current_axis = 0.0
 		return
-		
+
 	var f: Dictionary = _inputs[_i]
 	_i += 1
-	
+
 	var axis: float = float(f.get("axis", 0.0))
+	_current_axis = axis
+
 	if bool(f.get("jump", false)) and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-		
+
 	velocity.x = axis * SPEED if axis != 0.0 else move_toward(velocity.x, 0.0, SPEED)
 
 func _update_animation() -> void:
-	if velocity.x > 0.0: sprite.flip_h = false
-	elif velocity.x < 0.0: sprite.flip_h = true
-	
+	if velocity.x > 0.0:
+		sprite.flip_h = false
+	elif velocity.x < 0.0:
+		sprite.flip_h = true
+
 	if is_on_floor():
 		sprite.play("idle" if abs(velocity.x) < 0.1 else "run")
 	else:
