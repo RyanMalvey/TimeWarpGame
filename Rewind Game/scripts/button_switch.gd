@@ -22,6 +22,7 @@ var _channel_color: int = ColorChannels.Channel.WHITE
 		call_deferred("_propagate_color")
 
 @onready var anim: AnimationPlayer = $AnimationPlayer
+@onready var press_area: Area2D = $Area2D
 
 var _is_pressed: bool = false
 
@@ -57,6 +58,14 @@ func _on_area_2d_body_exited(body: Node) -> void:
 		return
 	if not body.is_in_group("Players"):
 		return
+
+	call_deferred("_handle_body_exit_check")
+
+func _handle_body_exit_check() -> void:
+	for body in press_area.get_overlapping_bodies():
+		if body != null and is_instance_valid(body) and body.is_in_group("Players"):
+			return
+
 	if not _is_pressed:
 		return
 
