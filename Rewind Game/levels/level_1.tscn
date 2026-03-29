@@ -5,9 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://ctc0t0hgnnlk2" path="res://scenes/killzone.tscn" id="7_jkxa6"]
 [ext_resource type="PackedScene" uid="uid://buekiqeclextb" path="res://scenes/coin.tscn" id="8_w75he"]
 [ext_resource type="PackedScene" uid="uid://hxox13rejaim" path="res://scenes/next_level.tscn" id="9_udfhf"]
-[ext_resource type="PackedScene" uid="uid://dull3ca1bn66f" path="res://scenes/platform.tscn" id="10_i6od7"]
 [ext_resource type="PackedScene" uid="uid://bkcjuklu3ljat" path="res://scenes/lever_switch.tscn" id="11_5ot28"]
-[ext_resource type="Script" uid="uid://basdu16bgvix7" path="res://scripts/RewindablePlatform.gd" id="11_ryfpa"]
 [ext_resource type="PackedScene" uid="uid://c0ejk66xfxlo4" path="res://scenes/door.tscn" id="12_aerfg"]
 [ext_resource type="PackedScene" uid="uid://byo7n4v8ti888" path="res://scenes/slime.tscn" id="12_ntdhj"]
 [ext_resource type="Script" uid="uid://dmtutdulfaaf6" path="res://scripts/Rewindable2D.gd" id="13_0fu15"]
@@ -183,44 +181,6 @@ sources/0 = SubResource("TileSetAtlasSource_voubc")
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_fswaw"]
 
-[sub_resource type="Animation" id="Animation_agq1w"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-241, 5)]
-}
-
-[sub_resource type="Animation" id="Animation_0pn0c"]
-resource_name = "move"
-length = 1.5
-loop_mode = 2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(-241, 5), Vector2(-400, -91)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_j8pfm"]
-_data = {
-&"RESET": SubResource("Animation_agq1w"),
-&"move": SubResource("Animation_0pn0c")
-}
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vtaks"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kvpfn"]
@@ -274,22 +234,6 @@ position = Vector2(-481, -106)
 [node name="NextLevel" parent="Coins" unique_id=1638927057 instance=ExtResource("9_udfhf")]
 position = Vector2(-529, -108)
 
-[node name="Platforms" type="Node" parent="." unique_id=710778038]
-
-[node name="Platform" parent="Platforms" unique_id=1316790607 instance=ExtResource("10_i6od7")]
-position = Vector2(-128, -59)
-
-[node name="Platform2" parent="Platforms" unique_id=566435758 instance=ExtResource("10_i6od7")]
-position = Vector2(-241, 5)
-script = ExtResource("11_ryfpa")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform2" unique_id=1536086624]
-libraries/ = SubResource("AnimationLibrary_j8pfm")
-autoplay = &"move"
-
-[node name="Platform3" parent="Platforms" unique_id=1986781759 instance=ExtResource("10_i6od7")]
-position = Vector2(-128, -27)
-
 [node name="Enemies" type="Node" parent="." unique_id=984009855]
 
 [node name="Slime" parent="Enemies" unique_id=141240691 instance=ExtResource("12_ntdhj")]
@@ -326,9 +270,6 @@ value = 1.0
 
 [node name="Player" parent="." unique_id=1355783099 instance=ExtResource("2_vjtdm")]
 
-[node name="Platform" parent="." unique_id=996944114 instance=ExtResource("10_i6od7")]
-position = Vector2(-103, -215)
-
 [node name="Coin" parent="." unique_id=594824014 instance=ExtResource("8_w75he")]
 position = Vector2(-103, -261)
 
@@ -344,6 +285,9 @@ channel_color = 1
 position = Vector2(-20, 0)
 outputs = [NodePath("../MovingPlatform")]
 channel_color = 2
+sensitivity = 5.0
+snap_speed = 20.0
+friction = 0.8
 
 [node name="MovingPlatform" parent="." unique_id=868779812 instance=ExtResource("13_nmsli")]
 position = Vector2(73, 21)
