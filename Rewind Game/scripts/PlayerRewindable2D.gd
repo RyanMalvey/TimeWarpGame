@@ -5,7 +5,9 @@ class_name PlayerRewindable2D
 func capture_extra() -> Dictionary:
 	return {
 		"axis": Input.get_axis("move_left", "move_right"),
-		"jump": Input.is_action_just_pressed("jump"),
+		"jump_pressed": Input.is_action_just_pressed("jump"),
+		"jump_held": Input.is_action_pressed("jump"),
+		"jump_released": Input.is_action_just_released("jump"),
 	}
 
 # --- clone replay buffer (only filled while rewinding) ---
@@ -30,7 +32,9 @@ func _on_rewind_frame_popped(frame: Dictionary) -> void:
 	var extra: Dictionary = frame.get("extra", {})
 	_rewound_inputs.append({
 		"axis": float(extra.get("axis", 0.0)),
-		"jump": bool(extra.get("jump", false)),
+		"jump_pressed": bool(extra.get("jump_pressed", false)),
+		"jump_held": bool(extra.get("jump_held", false)),
+		"jump_released": bool(extra.get("jump_released", false)),
 	})
 
 # CloneTrailController calls this when rewind stops.

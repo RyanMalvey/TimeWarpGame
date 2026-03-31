@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://df0egpeyglucv"]
+
+[ext_resource type="Script" uid="uid://b50owtuwb02qp" path="res://scripts/one_way_wall.gd" id="1_pioj8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e7uiy"]
+size = Vector2(16, 16)
+
+[node name="OneWayWall" type="StaticBody2D" unique_id=283658084]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_pioj8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1859178713]
+shape = SubResource("RectangleShape2D_e7uiy")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=484083023]
+color = Color(0.2, 0.9, 1, 0.4)
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)

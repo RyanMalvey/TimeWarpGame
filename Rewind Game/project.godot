@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Rewind Game"
-run/main_scene="res://levels/level_1.tscn"
+run/main_scene="uid://bbs4o8w122qpc"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -23,6 +23,13 @@ config/icon="res://icon.svg"
 
 Music="*res://scenes/music.tscn"
 RewindManager="*uid://bkg418xe006ua"
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=180
+window/stretch/mode="canvas_items"
+window/stretch/scale_mode="integer"
 
 [editor]
 
