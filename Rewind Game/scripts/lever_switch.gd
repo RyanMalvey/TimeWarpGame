@@ -25,7 +25,7 @@ var _channel_color: int = ColorChannels.Channel.WHITE
 @export var max_angle: float = 30.0
 @export var sensitivity: float = 10.0
 @export var snap_speed: float = 25.0
-@export var friction: float = 0.9
+@export var friction: float = 0.85
 
 var momentum: float = 0.0
 var active_body: CharacterBody2D = null

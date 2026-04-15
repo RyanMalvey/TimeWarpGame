@@ -515,7 +515,6 @@ position = Vector2(0, 150)
 shape = SubResource("WorldBoundaryShape2D_v5uil")
 
 [node name="Player" parent="." unique_id=1355783099 instance=ExtResource("4_ep78u")]
-position = Vector2(0, -2)
 
 [node name="ButtonSwitch" parent="." unique_id=1708443771 node_paths=PackedStringArray("outputs") instance=ExtResource("5_ilhis")]
 position = Vector2(216, 0)

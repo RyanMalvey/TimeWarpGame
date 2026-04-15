@@ -53,6 +53,12 @@ extends CharacterBody2D
 @export_range(0, 8, 1) var corner_correction_pixels: int = 4
 @export_range(0, 8, 1) var ledge_catch_pixels: int = 4
 
+# =========================
+# Rewind animation tuning
+# =========================
+@export var rewind_move_threshold: float = 0.5
+@export var rewind_vertical_threshold: float = 0.15
+
 @onready var sprite = $AnimatedSprite2D
 
 var alive := true
@@ -62,14 +68,33 @@ var _jump_buffer_timer: float = 0.0
 var _coyote_timer: float = 0.0
 var _was_on_floor: bool = false
 
+# Track which direction the player was facing during forward-time gameplay.
+# We keep this during rewind so the player appears to move backward through time.
+var _facing_right: bool = true
+
+# Track position between rendered frames so rewind animation can be chosen
+# from actual rewound motion.
+var _last_rewind_position: Vector2
+
 func _ready() -> void:
+	_last_rewind_position = global_position
+
 	if not RewindManager.rewind_started.is_connected(_on_rewind_started):
 		RewindManager.rewind_started.connect(_on_rewind_started)
 
+func _process(_delta: float) -> void:
+	if not alive:
+		return
+
+	if RewindManager.is_rewinding:
+		_handle_rewind_animation()
+
+	_last_rewind_position = global_position
+
 func _on_rewind_started() -> void:
-	# Removed the line that was disabling collision with Layer 3.
-	# One-Way collision handles the "jitter" spawning naturally now.
-	pass
+	# Reset the sampled rewind position right when rewind begins
+	# so the first frame does not get a huge delta.
+	_last_rewind_position = global_position
 
 func kill_player() -> void:
 	alive = false
@@ -204,11 +229,48 @@ func _try_ledge_catch(delta: float) -> void:
 
 func _handle_animations(direction: float) -> void:
 	if direction > 0:
-		sprite.flip_h = false
+		_facing_right = true
 	elif direction < 0:
-		sprite.flip_h = true
+		_facing_right = false
+
+	sprite.flip_h = not _facing_right
 
 	if is_on_floor():
-		sprite.play("idle" if direction == 0 else "run")
+		_play_forward("idle" if direction == 0 else "run")
 	else:
-		sprite.play("jump")
+		_play_forward("jump")
+
+func _handle_rewind_animation() -> void:
+	var motion := global_position - _last_rewind_position
+	var dx := motion.x
+	var dy := motion.y
+
+	# Face backward relative to current rewind movement.
+	# Also update _facing_right so when rewind ends, normal gameplay
+	# continues from the current visible facing direction.
+	if dx > rewind_move_threshold:
+		sprite.flip_h = true
+		_facing_right = false
+	elif dx < -rewind_move_threshold:
+		sprite.flip_h = false
+		_facing_right = true
+	# If horizontal motion is tiny, keep the current facing.
+
+	# Prioritize vertical motion first so airborne rewind segments play jump.
+	if abs(dy) > rewind_vertical_threshold:
+		_play_reversed("jump")
+	elif abs(dx) > rewind_move_threshold:
+		_play_reversed("run")
+	else:
+		_play_reversed("idle")
+
+func _play_forward(name: String) -> void:
+	if sprite.animation != name or sprite.speed_scale < 0.0:
+		sprite.play(name)
+	sprite.speed_scale = 1.0
+
+func _play_reversed(name: String) -> void:
+	if sprite.animation != name or sprite.speed_scale >= 0.0:
+		sprite.play(name, -1.0, true)
+	else:
+		sprite.speed_scale = -1.0

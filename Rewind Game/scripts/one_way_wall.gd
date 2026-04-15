@@ -80,6 +80,9 @@ func _apply_collision_mode() -> void:
 		0: # Player Passes
 			set_collision_layer_value(2, true)
 			set_collision_mask_value(3, true)
+			polygon.color = Color(0.2, 0.8, 1.0, 0.6) # blue/cyan
+
 		1: # Clone Passes
 			set_collision_layer_value(3, true)
 			set_collision_mask_value(2, true)
+			polygon.color = Color(1.0, 0.4, 0.8, 0.6) # pink/magenta

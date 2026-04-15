@@ -1,17 +1,12 @@
-[gd_scene format=3 uid="uid://dax3ej8dc4qj5"]
+[gd_scene format=3 uid="uid://clj1im3lmopi1"]
 
-[ext_resource type="Texture2D" uid="uid://cvq05tewwgr1t" path="res://assets/New Tileset.png" id="1_bmgug"]
-[ext_resource type="Script" uid="uid://c8awhj6bsugt0" path="res://scripts/Hud.gd" id="2_20opy"]
-[ext_resource type="PackedScene" uid="uid://ctc0t0hgnnlk2" path="res://scenes/killzone.tscn" id="3_8l0e1"]
-[ext_resource type="PackedScene" uid="uid://ci0mj3daomfq6" path="res://scenes/player.tscn" id="4_lfnxh"]
-[ext_resource type="PackedScene" uid="uid://gxwuwnnxcx47" path="res://scenes/button_switch.tscn" id="5_lfnxh"]
-[ext_resource type="PackedScene" uid="uid://df0egpeyglucv" path="res://scenes/one_way_wall.tscn" id="6_ofchu"]
-[ext_resource type="PackedScene" uid="uid://c0ejk66xfxlo4" path="res://scenes/door.tscn" id="7_jq78i"]
-[ext_resource type="PackedScene" uid="uid://bkcjuklu3ljat" path="res://scenes/lever_switch.tscn" id="8_jq78i"]
-[ext_resource type="PackedScene" uid="uid://hxox13rejaim" path="res://scenes/next_level.tscn" id="9_lsnkt"]
+[ext_resource type="Texture2D" uid="uid://cvq05tewwgr1t" path="res://assets/New Tileset.png" id="1_x27qk"]
+[ext_resource type="Script" uid="uid://c8awhj6bsugt0" path="res://scripts/Hud.gd" id="2_5n8do"]
+[ext_resource type="PackedScene" uid="uid://ctc0t0hgnnlk2" path="res://scenes/killzone.tscn" id="3_p7y1e"]
+[ext_resource type="PackedScene" uid="uid://ci0mj3daomfq6" path="res://scenes/player.tscn" id="4_vndwe"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_13k7l"]
-texture = ExtResource("1_bmgug")
+texture = ExtResource("1_x27qk")
 0:0/0 = 0
 0:0/0/terrain_set = 0
 0:0/0/terrain = 0
@@ -481,11 +476,11 @@ bg_color = Color(0.12941177, 1, 0.105882354, 1)
 tile_set = SubResource("TileSet_8xmsw")
 format = 2
 layer_0/name = "Mid"
-layer_0/tile_data = PackedInt32Array(65534, 65536, 0, 65535, 65536, 0, 0, 65536, 0, 1, 65536, 0, 131070, 65536, 1, 196606, 65536, 2, 196607, 65536, 2, 131071, 65536, 1, 65536, 65536, 1, 131072, 65536, 2, 131073, 65536, 2, 65537, 65536, 1, 65533, 0, 6, 196605, 65536, 2, 131069, 65536, 1, 131074, 65536, 2, 65538, 65536, 1, 2, 65536, 0, 65539, 65536, 1, 131075, 65536, 2, 3, 65536, 0, -3, 131072, 1, -65539, 131072, 1, -131075, 131072, 1, -196611, 131072, 1, -196612, 0, 1, -131076, 0, 1, -65540, 0, 1, -4, 0, 1, 65532, 0, 1, 131068, 0, 1, 196604, 0, 2, -262147, 131072, 1, -262148, 0, 1, -327683, 131072, 1, -393219, 131072, 1, -458755, 131072, 1, -458756, 0, 1, -393220, 0, 1, -327684, 0, 1, -589828, 0, 0, -589827, 65536, 0, -589826, 65536, 0, -589825, 65536, 0, -655360, 65536, 0, -524289, 65536, 2, -524290, 65536, 2, -524291, 0, 4, -524292, 0, 1, -589824, 65536, 2, -655359, 65536, 0, -655358, 65536, 0, -655357, 65536, 0, -655356, 65536, 0, -655355, 65536, 0, -655354, 65536, 0, -655353, 65536, 0, -655352, 65536, 0, -655351, 65536, 0, -655350, 65536, 0, -655349, 65536, 0, -655348, 65536, 0, -589823, 65536, 2, -589822, 65536, 2, -589821, 65536, 2, -589820, 65536, 2, -589819, 65536, 2, -589818, 65536, 2, -589817, 65536, 2, -589816, 65536, 2, -589815, 65536, 2, -589814, 65536, 2, -589813, 131072, 4, -589812, 0, 4, 131076, 196608, 6, 131077, 65536, 3, 131078, 65536, 3, 131079, 65536, 3, 131080, 196608, 5, 131081, 65536, 2, 131082, 65536, 2, 4, 131072, 0, 65540, 131072, 1, 8, 0, 0, 65544, 0, 1, 65545, 65536, 1, 65546, 65536, 1, 10, 65536, 0, 9, 65536, 0, -524277, 0, 1, -524276, 131072, 1, -458740, 131072, 1, -458741, 0, 1, -393205, 0, 1, -327669, 0, 1, -262133, 0, 1, -196597, 0, 2, -196596, 131072, 2, -262132, 131072, 1, -327668, 131072, 1, -393204, 131072, 1, 65547, 65536, 1, 131083, 65536, 2, 131084, 65536, 2, 65548, 65536, 1, 12, 65536, 0, 11, 65536, 0, 131085, 65536, 2, 65549, 65536, 1, 13, 65536, 0, 14, 65536, 0, 15, 65536, 0, 16, 65536, 0, 17, 65536, 0, 18, 65536, 0, 19, 65536, 0, 20, 65536, 0, 21, 65536, 0, 22, 65536, 0, 23, 65536, 0, 24, 65536, 0, 25, 65536, 0, 26, 65536, 0, 131086, 65536, 2, 65550, 65536, 1, 65551, 65536, 1, 65552, 65536, 1, 65553, 65536, 1, 65554, 65536, 1, 65555, 65536, 1, 65556, 65536, 1, 65557, 65536, 1, 65558, 65536, 1, 65559, 65536, 1, 65560, 65536, 1, 65561, 65536, 1, 65562, 65536, 1, 131098, 65536, 2, 131097, 65536, 2, 131096, 65536, 2, 131095, 65536, 2, 131094, 65536, 2, 131093, 65536, 2, 131092, 65536, 2, 131091, 65536, 2, 131090, 65536, 2, 131089, 65536, 2, 131088, 65536, 2, 131087, 65536, 2, 131099, 65536, 2, 131100, 131072, 2, 65564, 131072, 1, 65563, 65536, 1, 27, 131072, 6, 28, 131072, 1, -65508, 131072, 1, -131044, 131072, 1, -196580, 131072, 1, -262116, 131072, 1, -327652, 131072, 1, -393188, 131072, 1, -458724, 131072, 1, -524260, 131072, 1, -589796, 131072, 1, -655332, 131072, 0, -655333, 65536, 0, -655347, 65536, 0, -655346, 65536, 0, -655345, 65536, 0, -655344, 65536, 0, -655343, 65536, 0, -655341, 65536, 0, -655342, 65536, 0, -655340, 65536, 0, -655339, 65536, 0, -655338, 65536, 0, -655337, 65536, 0, -655336, 65536, 0, -655335, 65536, 0, -655334, 65536, 0, -589797, 131072, 4, -589798, 65536, 2, -589799, 65536, 2, -589800, 65536, 2, -589801, 65536, 2, -589802, 65536, 2, -589803, 65536, 2, -589804, 65536, 2, -589805, 65536, 2, -589806, 65536, 2, -589807, 65536, 2, -589808, 65536, 2, -589809, 65536, 2, -589810, 65536, 2, -589811, 65536, 2, -524261, 0, 1, -458725, 0, 1, -393189, 131072, 6, -327653, 65536, 1, -262117, 65536, 1, -196581, 131072, 4, -131045, 0, 1, -65509, 0, 1, -196584, 0, 2, -196583, 65536, 2, -196582, 65536, 2, -262120, 0, 1, -327656, 0, 1, -393192, 0, 0, -393191, 65536, 0, -393190, 65536, 0, -327654, 65536, 1, -327655, 65536, 1, -262119, 65536, 1, -262118, 65536, 1)
+layer_0/tile_data = PackedInt32Array(65534, 65536, 0, 65535, 65536, 0, 0, 65536, 0, 1, 65536, 0, 131070, 65536, 1, 196606, 65536, 2, 196607, 65536, 2, 131071, 65536, 1, 65536, 65536, 1, 131072, 65536, 2, 131073, 65536, 2, 65537, 65536, 1, 65533, 65536, 0, 196605, 65536, 2, 131069, 65536, 1, 131074, 65536, 2, 65538, 65536, 1, 2, 65536, 0, 65539, 131072, 1, 131075, 131072, 2, 3, 131072, 0, 196604, 0, 2, 65532, 0, 0, 131068, 0, 1)
 layer_1/name = "Background"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1267498107]
-script = ExtResource("2_20opy")
+script = ExtResource("2_5n8do")
 
 [node name="UI" type="Control" parent="CanvasLayer" unique_id=1583894337]
 layout_mode = 3
@@ -510,43 +505,10 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_8xmsw")
 max_value = 1.0
 value = 1.0
 
-[node name="Killzone" parent="." unique_id=2061195314 instance=ExtResource("3_8l0e1")]
+[node name="Killzone" parent="." unique_id=2061195314 instance=ExtResource("3_p7y1e")]
 position = Vector2(0, 150)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=2085614625]
 shape = SubResource("WorldBoundaryShape2D_v5uil")
 
-[node name="Player" parent="." unique_id=1355783099 instance=ExtResource("4_lfnxh")]
-
-[node name="ButtonSwitch" parent="." unique_id=1708443771 node_paths=PackedStringArray("outputs") instance=ExtResource("5_lfnxh")]
-position = Vector2(104, 32)
-outputs = [NodePath("../Door")]
-channel_color = 1
-
-[node name="OneWayWall" parent="." unique_id=283658084 instance=ExtResource("6_ofchu")]
-position = Vector2(104, 8)
-collision_layer = 4
-collision_mask = 2
-pass_mode = 1
-width_tiles = 3
-
-[node name="Door" parent="." unique_id=2100927662 instance=ExtResource("7_jq78i")]
-position = Vector2(176, 0)
-
-[node name="OneWayWall2" parent="." unique_id=1395100718 instance=ExtResource("6_ofchu")]
-position = Vector2(392, -16)
-collision_layer = 4
-collision_mask = 2
-pass_mode = 1
-height_tiles = 2
-
-[node name="LeverSwitch" parent="." unique_id=1590509556 node_paths=PackedStringArray("outputs") instance=ExtResource("8_jq78i")]
-position = Vector2(416, 0)
-outputs = [NodePath("../Door2")]
-channel_color = 2
-
-[node name="Door2" parent="." unique_id=455446109 instance=ExtResource("7_jq78i")]
-position = Vector2(384, -96)
-
-[node name="NextLevel" parent="." unique_id=1638927057 instance=ExtResource("9_lsnkt")]
-position = Vector2(416, -112)
+[node name="Player" parent="." unique_id=1355783099 instance=ExtResource("4_vndwe")]

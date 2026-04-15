@@ -7,31 +7,43 @@ var _channel_color: int = ColorChannels.Channel.WHITE
 @export var open_alpha: float = 0.35
 @export var closed_alpha: float = 1.0
 @export var closed_layer: int = 1
+@export var starts_open: bool = false
 
+var _is_powered: bool = false
 var _is_open: bool = false
 
 func _ready() -> void:
-	_apply_visual_only()
+	_update_door_state()
 
 func activate() -> void:
 	if Engine.is_editor_hint():
 		return
-	if _is_open:
+	if _is_powered:
 		return
-	_is_open = true
-	_apply_state_runtime()
+
+	_is_powered = true
+	_update_door_state()
 
 func deactivate() -> void:
 	if Engine.is_editor_hint():
 		return
-	if not _is_open:
+	if not _is_powered:
 		return
-	_is_open = false
-	_apply_state_runtime()
+
+	_is_powered = false
+	_update_door_state()
 
 func set_channel_color(value: int) -> void:
 	_channel_color = value
 	_apply_visual_only()
+
+func _update_door_state() -> void:
+	if _is_powered:
+		_is_open = not starts_open
+	else:
+		_is_open = starts_open
+
+	_apply_state_runtime()
 
 func _apply_visual_only() -> void:
 	var alpha := open_alpha if _is_open else closed_alpha

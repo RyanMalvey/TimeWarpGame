@@ -48,6 +48,7 @@ func _on_area_2d_body_entered(body: Node) -> void:
 
 	_is_pressed = true
 	anim.play("pressed")
+	anim.advance(0)
 
 	for output in outputs:
 		if output != null and output.has_method("activate"):
@@ -70,7 +71,8 @@ func _handle_body_exit_check() -> void:
 		return
 
 	_is_pressed = false
-	anim.play("unpressed")
+	anim.play_backwards("pressed")
+	anim.advance(0)
 
 	for output in outputs:
 		if output != null and output.has_method("deactivate"):

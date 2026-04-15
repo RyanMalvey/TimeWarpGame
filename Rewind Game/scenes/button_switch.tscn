@@ -33,27 +33,10 @@ tracks/0/keys = {
 "values": [Vector2(0, 0), Vector2(0, 2)]
 }
 
-[sub_resource type="Animation" id="Animation_aague"]
-resource_name = "unpressed"
-length = 0.25
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Top:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.23333333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 2), Vector2(0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_i52pq"]
 _data = {
 &"RESET": SubResource("Animation_rvuq1"),
-&"pressed": SubResource("Animation_aemor"),
-&"unpressed": SubResource("Animation_aague")
+&"pressed": SubResource("Animation_aemor")
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8dk0i"]
@@ -89,7 +72,7 @@ polygon = PackedVector2Array(-16, -8, 16, -8, 16, -5, -16, -5)
 [node name="Base" type="StaticBody2D" parent="." unique_id=905415921]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base" unique_id=941265248]
-polygon = PackedVector2Array(-15, -8, -23, 0, 23, 0, 15, -8, 15, -5, -15, -5)
+polygon = PackedVector2Array(-15, -8, -23, 0, 23, 0, 15, -8, 12, -5, -12, -5)
 
 [node name="Base" type="Polygon2D" parent="Base" unique_id=1916580997]
 position = Vector2(-0.43243313, 0)
