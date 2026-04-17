@@ -46,6 +46,9 @@ var is_rewinding: bool = false
 var rewind_energy: float = 0.0
 var _rewindables: Array[Node] = []
 
+# Prevents rewind from restarting until the player releases the key
+var _rewind_locked_until_release: bool = false
+
 func _ready() -> void:
 	# Priority -100 ensures we handle input/syncing BEFORE the physics engine moves things
 	process_priority = -100
@@ -61,7 +64,8 @@ func _set_buffer_seconds(value: float) -> void:
 	rewind_energy = clampf(pct * _buffer_seconds, 0.0, _buffer_seconds)
 
 func register(rewindable: Node) -> void:
-	if rewindable == null or _rewindables.has(rewindable): return
+	if rewindable == null or _rewindables.has(rewindable):
+		return
 	_rewindables.append(rewindable)
 
 func unregister(rewindable: Node) -> void:
@@ -71,7 +75,8 @@ func can_rewind() -> bool:
 	return rewind_energy > 0.0 and _buffer_seconds > 0.0
 
 func start_rewind() -> void:
-	if is_rewinding or not can_rewind(): return
+	if is_rewinding or not can_rewind():
+		return
 	is_rewinding = true
 	emit_signal("rewind_started")
 	for r in _rewindables:
@@ -79,8 +84,19 @@ func start_rewind() -> void:
 			r.begin_rewind()
 
 func stop_rewind() -> void:
-	if not is_rewinding: return
+	if not is_rewinding:
+		return
 	is_rewinding = false
+	emit_signal("rewind_stopped")
+	for r in _rewindables:
+		if is_instance_valid(r) and r.has_method("end_rewind"):
+			r.end_rewind()
+
+func stop_rewind_from_empty() -> void:
+	if not is_rewinding:
+		return
+	is_rewinding = false
+	_rewind_locked_until_release = true
 	emit_signal("rewind_stopped")
 	for r in _rewindables:
 		if is_instance_valid(r) and r.has_method("end_rewind"):
@@ -90,20 +106,30 @@ func get_max_frames() -> int:
 	return int(_buffer_seconds * float(Engine.physics_ticks_per_second))
 
 func get_rewind_percent() -> float:
-	if _buffer_seconds <= 0.0: return 0.0
+	if _buffer_seconds <= 0.0:
+		return 0.0
 	return clampf(rewind_energy / _buffer_seconds, 0.0, 1.0)
 
 func get_rewind_state() -> String:
-	if is_rewinding: return "rewinding"
-	if rewind_energy >= _buffer_seconds - 0.0001: return "full"
+	if is_rewinding:
+		return "rewinding"
+	if rewind_energy >= _buffer_seconds - 0.0001:
+		return "full"
 	return "recharging"
 
 func _physics_process(delta: float) -> void:
 	if handle_input:
-		if Input.is_action_pressed(rewind_action):
-			if not is_rewinding and can_rewind():
+		# Unlock only after the rewind key is fully released
+		if _rewind_locked_until_release and not Input.is_action_pressed(rewind_action):
+			_rewind_locked_until_release = false
+
+		# Start rewind only on a fresh press, and only if not locked
+		if Input.is_action_just_pressed(rewind_action):
+			if not _rewind_locked_until_release and not is_rewinding and can_rewind():
 				start_rewind()
-		else:
+
+		# Normal manual stop when player releases the key
+		if Input.is_action_just_released(rewind_action):
 			if is_rewinding:
 				stop_rewind()
 
@@ -111,23 +137,24 @@ func _physics_process(delta: float) -> void:
 		rewind_energy -= delta * _drain_rate
 		if rewind_energy <= 0.0:
 			rewind_energy = 0.0
-			stop_rewind()
+			stop_rewind_from_empty()
 	else:
 		rewind_energy += delta * _recharge_rate
 		rewind_energy = min(rewind_energy, _buffer_seconds)
 
 	var max_frames: int = get_max_frames()
 	for r in _rewindables:
-		if not is_instance_valid(r): continue
+		if not is_instance_valid(r):
+			continue
 
 		if is_rewinding:
 			if r.has_method("rewind_step"):
 				r.rewind_step(delta, _rewind_speed)
 		else:
-			# PHYSICS SYNC: Force the target to snap to its floor/platform 
+			# PHYSICS SYNC: Force the target to snap to its floor/platform
 			# before we take the "snapshot" of its position.
 			if r._target:
 				r._target.force_update_transform()
-			
+
 			if r.has_method("record_step"):
 				r.record_step(max_frames)
