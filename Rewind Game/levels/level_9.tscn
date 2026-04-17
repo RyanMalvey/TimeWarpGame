@@ -545,7 +545,7 @@ outputs = [NodePath("../Door3")]
 channel_color = 1
 
 [node name="ButtonSwitch2" parent="." unique_id=1678181444 node_paths=PackedStringArray("outputs") instance=ExtResource("8_5n8do")]
-position = Vector2(304, -80)
+position = Vector2(312, -80)
 outputs = [NodePath("../Door4")]
 channel_color = 3
 
@@ -556,11 +556,11 @@ position = Vector2(256, -80)
 position = Vector2(256, 0)
 
 [node name="OneWayWall" parent="." unique_id=283658084 instance=ExtResource("5_gn8iv")]
-position = Vector2(208, -56)
+position = Vector2(216, -72)
 collision_layer = 4
 collision_mask = 2
 pass_mode = 1
-width_tiles = 4
+width_tiles = 5
 
 [node name="NextLevel" parent="." unique_id=1638927057 instance=ExtResource("9_p7y1e")]
 position = Vector2(304, -32)
