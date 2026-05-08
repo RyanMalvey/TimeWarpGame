@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://chxijryqupyyj"]
+
+[ext_resource type="Script" uid="uid://bdgpud7bph8q6" path="res://scripts/autogenerate_background.gd" id="1_exnfh"]
+
+[node name="AutogenerateBackground" type="Node2D" unique_id=1535308765]
+script = ExtResource("1_exnfh")
