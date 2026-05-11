@@ -15,14 +15,19 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Rewind Game"
-run/main_scene="uid://bbs4o8w122qpc"
+run/main_scene="uid://tcpqstuc0xmf"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="uid://cwdro7gcyirok"
 
 [autoload]
 
 Music="*res://scenes/music.tscn"
 RewindManager="*uid://bkg418xe006ua"
+Ambience="*uid://b2lslvwxii5p4"
 
 [display]
 

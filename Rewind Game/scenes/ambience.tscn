@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://b2lslvwxii5p4"]
+
+[ext_resource type="AudioStream" uid="uid://ce8murlaqljxp" path="res://assets/ambience.wav" id="1_hu8jf"]
+
+[node name="Music" type="AudioStreamPlayer2D" unique_id=770375128]
+stream = ExtResource("1_hu8jf")
+volume_db = -5.0
+autoplay = true
+bus = &"Ambience"

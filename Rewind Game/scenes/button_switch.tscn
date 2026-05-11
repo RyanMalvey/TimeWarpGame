@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://gxwuwnnxcx47"]
 
 [ext_resource type="Script" uid="uid://b4jog8t6hnikq" path="res://scripts/button_switch.gd" id="1_rvuq1"]
+[ext_resource type="AudioStream" uid="uid://dy6korkdqub4b" path="res://assets/button activate.wav" id="2_aague"]
+[ext_resource type="AudioStream" uid="uid://cp0ajgs4jfyad" path="res://assets/button deactivate.wav" id="3_i52pq"]
 
 [sub_resource type="Animation" id="Animation_rvuq1"]
 length = 0.001
@@ -79,6 +81,14 @@ position = Vector2(-0.43243313, 0)
 scale = Vector2(0.8648648, 1)
 color = Color(0.22190201, 0.22190201, 0.22190201, 1)
 polygon = PackedVector2Array(-26.09375, 0, 27.09375, 0, 17.84375, -7.9999995, 17.84375, -4.9999995, -16.84375, -4.9999995, -16.84375, -7.9999995)
+
+[node name="Activate" type="AudioStreamPlayer2D" parent="." unique_id=1312864757]
+stream = ExtResource("2_aague")
+max_distance = 300.0
+
+[node name="Deactivate" type="AudioStreamPlayer2D" parent="." unique_id=580895519]
+stream = ExtResource("3_i52pq")
+max_distance = 300.0
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

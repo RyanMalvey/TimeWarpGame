@@ -1,12 +1,21 @@
 [gd_scene format=3 uid="uid://b385my0vvols8"]
 
 [ext_resource type="Script" uid="uid://dn7idenicqhpa" path="res://scripts/moving_platform.gd" id="1_ms375"]
+[ext_resource type="AudioStream" uid="uid://da46s4mwupapp" path="res://assets/moving platform start.wav" id="2_afg43"]
+[ext_resource type="AudioStream" uid="uid://0ymbonefnncm" path="res://assets/moving platform mid.wav" id="3_pgg5x"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ms375"]
+polygon = PackedVector2Array(-16, -4, 16, -4, 16, 4, -16, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qk4kv"]
 size = Vector2(32, 8)
 
 [node name="MovingPlatform" type="AnimatableBody2D" unique_id=868779812]
 script = ExtResource("1_ms375")
+mid_play_volume_db = 0.0
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=1841379271]
+occluder = SubResource("OccluderPolygon2D_ms375")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=610564069]
 shape = SubResource("RectangleShape2D_qk4kv")
@@ -14,3 +23,13 @@ one_way_collision = true
 
 [node name="ColorFill" type="Polygon2D" parent="." unique_id=1326054589]
 polygon = PackedVector2Array(-16, -4, 16, -4, 16, 4, -16, 4)
+
+[node name="StartSound" type="AudioStreamPlayer2D" parent="." unique_id=858612581]
+stream = ExtResource("2_afg43")
+volume_db = -10.0
+max_distance = 300.0
+
+[node name="MidSound" type="AudioStreamPlayer2D" parent="." unique_id=316780652]
+stream = ExtResource("3_pgg5x")
+volume_db = -10.0
+max_distance = 300.0

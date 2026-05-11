@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dmkd2utskgrax"]
+
+[ext_resource type="Texture2D" uid="uid://bydlwn7e5hkc6" path="res://assets/tall lab light.png" id="1_fck5i"]
+[ext_resource type="Texture2D" uid="uid://csnqa0syyvxfu" path="res://assets/Light Sprite.png" id="1_hqcgi"]
+[ext_resource type="PackedScene" uid="uid://bvctnd3m817v8" path="res://scenes/light_hum.tscn" id="3_ciure"]
+
+[node name="ConeLightTall" type="Node2D" unique_id=979644745]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=502178972]
+texture = ExtResource("1_hqcgi")
+
+[node name="PointLight2D2" type="PointLight2D" parent="." unique_id=628273215]
+scale = Vector2(1, 1.203125)
+shadow_enabled = true
+texture = ExtResource("1_fck5i")
+offset = Vector2(0, 70)
+texture_scale = 0.4
+
+[node name="LightHum" parent="." unique_id=1954476730 instance=ExtResource("3_ciure")]

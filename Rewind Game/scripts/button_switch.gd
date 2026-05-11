@@ -23,6 +23,8 @@ var _channel_color: int = ColorChannels.Channel.WHITE
 
 @onready var anim: AnimationPlayer = $AnimationPlayer
 @onready var press_area: Area2D = $Area2D
+@onready var activate_sound: AudioStreamPlayer2D = $Activate
+@onready var deactivate_sound: AudioStreamPlayer2D = $Deactivate
 
 var _is_pressed: bool = false
 
@@ -47,6 +49,10 @@ func _on_area_2d_body_entered(body: Node) -> void:
 		return
 
 	_is_pressed = true
+
+	if activate_sound:
+		activate_sound.play()
+
 	anim.play("pressed")
 	anim.advance(0)
 
@@ -71,6 +77,10 @@ func _handle_body_exit_check() -> void:
 		return
 
 	_is_pressed = false
+
+	if deactivate_sound:
+		deactivate_sound.play()
+
 	anim.play_backwards("pressed")
 	anim.advance(0)
 

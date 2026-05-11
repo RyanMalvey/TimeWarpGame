@@ -85,4 +85,4 @@ func _apply_collision_mode() -> void:
 		1: # Clone Passes
 			set_collision_layer_value(3, true)
 			set_collision_mask_value(2, true)
-			polygon.color = Color(1.0, 0.4, 0.8, 0.6) # pink/magenta
+			polygon.color = Color(1.0, 0.502, 0.137, 0.643) # pink/magenta

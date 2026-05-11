@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bvctnd3m817v8"]
+
+[ext_resource type="AudioStream" uid="uid://chgvq4q00x8k1" path="res://assets/light hum.wav" id="1_3gc7i"]
+
+[node name="LightHum" type="Node2D" unique_id=1954476730]
+
+[node name="LightHum" type="AudioStreamPlayer2D" parent="." unique_id=1953726733]
+stream = ExtResource("1_3gc7i")
+volume_db = -4.0
+autoplay = true
+max_distance = 60.0

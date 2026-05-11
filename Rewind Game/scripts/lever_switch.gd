@@ -33,6 +33,8 @@ var last_confirmed_side: String = "LEFT"
 
 @onready var arm: Node2D = $LeverArm
 @onready var push_area: Area2D = $LeverArm/PushArea
+@onready var activate_sound: AudioStreamPlayer2D = $Activate
+@onready var deactivate_sound: AudioStreamPlayer2D = $Deactivate
 
 func _ready() -> void:
 	_apply_own_color()
@@ -105,11 +107,17 @@ func _get_body_push_direction(body: CharacterBody2D) -> float:
 	return 0.0
 
 func on_lever_flipped_right() -> void:
+	if activate_sound:
+		activate_sound.play()
+
 	for output in outputs:
 		if output != null and output.has_method("activate"):
 			output.activate()
 
 func on_lever_flipped_left() -> void:
+	if deactivate_sound:
+		deactivate_sound.play()
+
 	for output in outputs:
 		if output != null and output.has_method("deactivate"):
 			output.deactivate()

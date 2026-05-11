@@ -1,12 +1,20 @@
 [gd_scene format=3 uid="uid://c0ejk66xfxlo4"]
 
 [ext_resource type="Script" uid="uid://br3ucaajlovs1" path="res://scripts/door.gd" id="1_hpvv5"]
+[ext_resource type="AudioStream" uid="uid://dmfieilylw1k8" path="res://assets/door lock.wav" id="2_83dcw"]
+[ext_resource type="AudioStream" uid="uid://cpn145klg5mhj" path="res://assets/door unlock.wav" id="3_la1wf"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_hpvv5"]
+polygon = PackedVector2Array(0, -32, 3, -32, 3, 0, 0, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uvdjg"]
 size = Vector2(3, 32)
 
 [node name="Door" type="StaticBody2D" unique_id=2100927662]
 script = ExtResource("1_hpvv5")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=1771633765]
+occluder = SubResource("OccluderPolygon2D_hpvv5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1505289509]
 position = Vector2(1.5, -16)
@@ -15,3 +23,13 @@ shape = SubResource("RectangleShape2D_uvdjg")
 [node name="ColorFill" type="Polygon2D" parent="." unique_id=1796803816]
 scale = Vector2(0.25, 1.4545455)
 polygon = PackedVector2Array(0, 0, 12, 0, 12, -22, 0, -22)
+
+[node name="Lock" type="AudioStreamPlayer2D" parent="." unique_id=1569733199]
+stream = ExtResource("2_83dcw")
+volume_db = -15.0
+max_distance = 300.0
+
+[node name="Unlock" type="AudioStreamPlayer2D" parent="." unique_id=392885979]
+stream = ExtResource("3_la1wf")
+volume_db = -15.0
+max_distance = 300.0

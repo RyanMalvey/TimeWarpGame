@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://e1npdsggr1fc"]
+
+[ext_resource type="Texture2D" uid="uid://cs8dbvuqnmdje" path="res://assets/Wall Light Sprite.png" id="1_vdldq"]
+[ext_resource type="Texture2D" uid="uid://b4w866yelb4hy" path="res://assets/wall light.png" id="2_mth0d"]
+[ext_resource type="PackedScene" uid="uid://bvctnd3m817v8" path="res://scenes/light_hum.tscn" id="3_8dkg7"]
+
+[node name="WallLight" type="Node2D" unique_id=246831056]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=540468507]
+texture = ExtResource("1_vdldq")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=993375548]
+color = Color(0.86323917, 0.8632396, 0.86323935, 1)
+texture = ExtResource("2_mth0d")
+offset = Vector2(0, -6)
+texture_scale = 0.1
+
+[node name="LightHum" parent="." unique_id=1954476730 instance=ExtResource("3_8dkg7")]

@@ -9,29 +9,17 @@ extends CharacterBody2D
 
 # =========================
 # Variable jump height
-# Tap jump = short hop
-# Hold jump = full jump
-# Lower value = harsher cut
 # =========================
 @export_range(0.0, 1.0, 0.01) var jump_cut_multiplier: float = 0.45
 
 # =========================
-# Jump buffering
-# Press jump slightly early and it still jumps on landing
+# Jump buffering / Coyote time
 # =========================
 @export var jump_buffer_time: float = 0.12
-
-# =========================
-# Coyote time
-# Jump slightly after leaving a platform
-# =========================
 @export var coyote_time: float = 0.10
 
 # =========================
 # Apex modifiers
-# Near the top of the jump:
-# - lighter gravity
-# - slight horizontal speed boost
 # =========================
 @export var apex_velocity_threshold: float = 35.0
 @export_range(0.0, 2.0, 0.01) var apex_gravity_multiplier: float = 0.65
@@ -44,11 +32,6 @@ extends CharacterBody2D
 
 # =========================
 # Edge detection / forgiveness
-# corner_correction_pixels:
-#   helps avoid bonking a corner by 1-2 pixels while moving upward
-#
-# ledge_catch_pixels:
-#   helps you barely catch the top of a platform while descending
 # =========================
 @export_range(0, 8, 1) var corner_correction_pixels: int = 4
 @export_range(0, 8, 1) var ledge_catch_pixels: int = 4
@@ -59,7 +42,23 @@ extends CharacterBody2D
 @export var rewind_move_threshold: float = 0.5
 @export var rewind_vertical_threshold: float = 0.15
 
-@onready var sprite = $AnimatedSprite2D
+# =========================
+# Audio
+# =========================
+@export var footstep_1: AudioStream
+@export var footstep_2: AudioStream
+@export var footstep_interval: float = 0.28
+@export var footstep_min_speed: float = 10.0
+
+@export var rewind_loop_fade_out_time: float = 0.12
+@export var rewind_loop_silent_volume_db: float = -40.0
+
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var jump_sound: AudioStreamPlayer2D = $JumpSound
+@onready var land_sound: AudioStreamPlayer2D = $LandSound
+@onready var footstep_sound: AudioStreamPlayer2D = $FootstepSound
+@onready var rewind_start_sound: AudioStreamPlayer2D = $RewindStart
+@onready var rewind_loop_sound: AudioStreamPlayer2D = $RewindLoop
 
 var alive := true
 var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
@@ -67,14 +66,16 @@ var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravi
 var _jump_buffer_timer: float = 0.0
 var _coyote_timer: float = 0.0
 var _was_on_floor: bool = false
+var _footstep_timer: float = 0.0
 
-# Track which direction the player was facing during forward-time gameplay.
-# We keep this during rewind so the player appears to move backward through time.
 var _facing_right: bool = true
-
-# Track position between rendered frames so rewind animation can be chosen
-# from actual rewound motion.
 var _last_rewind_position: Vector2
+
+var _was_rewinding: bool = false
+var _rewind_audio_should_loop: bool = false
+var _rewind_fade_tween: Tween = null
+var _rewind_loop_play_volume_db: float = 0.0
+
 
 func _ready() -> void:
 	_last_rewind_position = global_position
@@ -82,24 +83,94 @@ func _ready() -> void:
 	if not RewindManager.rewind_started.is_connected(_on_rewind_started):
 		RewindManager.rewind_started.connect(_on_rewind_started)
 
+	if rewind_start_sound and not rewind_start_sound.finished.is_connected(_on_rewind_start_finished):
+		rewind_start_sound.finished.connect(_on_rewind_start_finished)
+
+	if rewind_loop_sound:
+		_rewind_loop_play_volume_db = rewind_loop_sound.volume_db
+
+
 func _process(_delta: float) -> void:
 	if not alive:
 		return
 
+	if RewindManager.is_rewinding and not _was_rewinding:
+		_start_rewind_audio()
+
+	if not RewindManager.is_rewinding and _was_rewinding:
+		_stop_rewind_audio()
+
 	if RewindManager.is_rewinding:
 		_handle_rewind_animation()
 
+	_was_rewinding = RewindManager.is_rewinding
 	_last_rewind_position = global_position
 
+
 func _on_rewind_started() -> void:
-	# Reset the sampled rewind position right when rewind begins
-	# so the first frame does not get a huge delta.
 	_last_rewind_position = global_position
+	_footstep_timer = 0.0
+
+
+func _start_rewind_audio() -> void:
+	_rewind_audio_should_loop = true
+
+	if _rewind_fade_tween:
+		_rewind_fade_tween.kill()
+		_rewind_fade_tween = null
+
+	if rewind_loop_sound:
+		rewind_loop_sound.stop()
+		rewind_loop_sound.volume_db = _rewind_loop_play_volume_db
+
+	if rewind_start_sound:
+		rewind_start_sound.play()
+
+
+func _stop_rewind_audio() -> void:
+	_rewind_audio_should_loop = false
+
+	if rewind_start_sound and rewind_start_sound.playing:
+		rewind_start_sound.stop()
+
+	if rewind_loop_sound and rewind_loop_sound.playing:
+		if _rewind_fade_tween:
+			_rewind_fade_tween.kill()
+
+		_rewind_fade_tween = create_tween()
+		_rewind_fade_tween.tween_property(
+			rewind_loop_sound,
+			"volume_db",
+			rewind_loop_silent_volume_db,
+			rewind_loop_fade_out_time
+		)
+		_rewind_fade_tween.tween_callback(_finish_rewind_loop_fade)
+
+
+func _finish_rewind_loop_fade() -> void:
+	if rewind_loop_sound:
+		rewind_loop_sound.stop()
+		rewind_loop_sound.volume_db = _rewind_loop_play_volume_db
+
+	_rewind_fade_tween = null
+
+
+func _on_rewind_start_finished() -> void:
+	if not _rewind_audio_should_loop:
+		return
+
+	if rewind_loop_sound:
+		rewind_loop_sound.volume_db = _rewind_loop_play_volume_db
+		rewind_loop_sound.play()
+
 
 func kill_player() -> void:
 	alive = false
+	_stop_rewind_audio()
+
 	if RewindManager.is_rewinding:
 		RewindManager.stop_rewind()
+
 
 func get_lever_push_direction() -> float:
 	if not alive or RewindManager.is_rewinding:
@@ -107,70 +178,98 @@ func get_lever_push_direction() -> float:
 
 	return Input.get_axis("move_left", "move_right")
 
+
 func _physics_process(delta: float) -> void:
 	if not alive or RewindManager.is_rewinding:
 		return
 
 	var on_floor_now := is_on_floor()
 
-	# Refresh coyote timer whenever grounded
 	if on_floor_now:
 		_coyote_timer = coyote_time
 	else:
 		_coyote_timer = max(_coyote_timer - delta, 0.0)
 
-	# Jump buffer input
 	if Input.is_action_just_pressed("jump"):
 		_jump_buffer_timer = jump_buffer_time
 	else:
 		_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
 
-	# Gravity
 	if not on_floor_now:
 		velocity.y += _get_current_gravity() * delta
 
-	# Clamp fall speed
 	if velocity.y > max_fall_speed:
 		velocity.y = max_fall_speed
 
-	# Jump execution from floor, coyote time, or jump buffer
 	if _jump_buffer_timer > 0.0 and (on_floor_now or _coyote_timer > 0.0):
 		_do_jump()
 
-	# Variable jump height
 	if Input.is_action_just_released("jump") and velocity.y < 0.0:
 		velocity.y *= jump_cut_multiplier
 
 	var direction := Input.get_axis("move_left", "move_right")
 	_handle_horizontal_movement(direction)
 
-	# Edge forgiveness before movement
 	_try_corner_correction(delta)
 	_try_ledge_catch(delta)
 
 	move_and_slide()
 
+	if not _was_on_floor and is_on_floor():
+		land_sound.play()
+
+	_handle_footsteps(delta)
 	_handle_animations(direction)
+
 	_was_on_floor = is_on_floor()
+
 
 func _do_jump() -> void:
 	velocity.y = jump_velocity
 	_jump_buffer_timer = 0.0
 	_coyote_timer = 0.0
+	_footstep_timer = 0.0
+
+	jump_sound.play()
+
+
+func _handle_footsteps(delta: float) -> void:
+	var is_walking: bool = is_on_floor() and abs(velocity.x) > footstep_min_speed
+
+	if not is_walking:
+		_footstep_timer = 0.0
+		return
+
+	_footstep_timer -= delta
+
+	if _footstep_timer <= 0.0:
+		var possible_steps: Array[AudioStream] = []
+
+		if footstep_1 != null:
+			possible_steps.append(footstep_1)
+		if footstep_2 != null:
+			possible_steps.append(footstep_2)
+
+		if possible_steps.is_empty():
+			return
+
+		footstep_sound.stream = possible_steps.pick_random()
+		footstep_sound.play()
+		_footstep_timer = footstep_interval
+
 
 func _get_current_gravity() -> float:
 	var g := gravity
 
-	# Apex modifier: lighter gravity near the top of the jump
 	if not is_on_floor() and abs(velocity.y) <= apex_velocity_threshold:
 		g *= apex_gravity_multiplier
 
 	return g
 
+
 func _handle_horizontal_movement(direction: float) -> void:
 	var current_speed := speed
 
-	# Apex modifier: slight horizontal boost near jump apex
 	if not is_on_floor() and abs(velocity.y) <= apex_velocity_threshold:
 		current_speed *= apex_speed_multiplier
 
@@ -179,9 +278,8 @@ func _handle_horizontal_movement(direction: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, ground_stop_rate)
 
+
 func _try_corner_correction(delta: float) -> void:
-	# Prevent tiny upward corner bonks by nudging sideways a few pixels.
-	# Only applies while moving upward.
 	if corner_correction_pixels <= 0:
 		return
 	if velocity.y >= 0.0:
@@ -189,7 +287,6 @@ func _try_corner_correction(delta: float) -> void:
 
 	var vertical_motion := Vector2(0.0, velocity.y * delta)
 
-	# If we're not about to hit something above, do nothing.
 	if not test_move(global_transform, vertical_motion):
 		return
 
@@ -202,8 +299,8 @@ func _try_corner_correction(delta: float) -> void:
 				global_position.x += offset
 				return
 
+
 func _try_ledge_catch(delta: float) -> void:
-	# Helps catch the top of a platform when descending and barely clipping the edge.
 	if ledge_catch_pixels <= 0:
 		return
 	if is_on_floor():
@@ -215,7 +312,6 @@ func _try_ledge_catch(delta: float) -> void:
 
 	var full_motion := velocity * delta
 
-	# Only try this if our current motion would collide.
 	if not test_move(global_transform, full_motion):
 		return
 
@@ -226,6 +322,7 @@ func _try_ledge_catch(delta: float) -> void:
 		if not test_move(test_transform, full_motion):
 			global_position.y -= i
 			return
+
 
 func _handle_animations(direction: float) -> void:
 	if direction > 0:
@@ -240,23 +337,19 @@ func _handle_animations(direction: float) -> void:
 	else:
 		_play_forward("jump")
 
+
 func _handle_rewind_animation() -> void:
 	var motion := global_position - _last_rewind_position
 	var dx := motion.x
 	var dy := motion.y
 
-	# Face backward relative to current rewind movement.
-	# Also update _facing_right so when rewind ends, normal gameplay
-	# continues from the current visible facing direction.
 	if dx > rewind_move_threshold:
 		sprite.flip_h = true
 		_facing_right = false
 	elif dx < -rewind_move_threshold:
 		sprite.flip_h = false
 		_facing_right = true
-	# If horizontal motion is tiny, keep the current facing.
 
-	# Prioritize vertical motion first so airborne rewind segments play jump.
 	if abs(dy) > rewind_vertical_threshold:
 		_play_reversed("jump")
 	elif abs(dx) > rewind_move_threshold:
@@ -264,13 +357,15 @@ func _handle_rewind_animation() -> void:
 	else:
 		_play_reversed("idle")
 
-func _play_forward(name: String) -> void:
-	if sprite.animation != name or sprite.speed_scale < 0.0:
-		sprite.play(name)
+
+func _play_forward(anim_name: String) -> void:
+	if sprite.animation != anim_name or sprite.speed_scale < 0.0:
+		sprite.play(anim_name)
 	sprite.speed_scale = 1.0
 
-func _play_reversed(name: String) -> void:
-	if sprite.animation != name or sprite.speed_scale >= 0.0:
-		sprite.play(name, -1.0, true)
+
+func _play_reversed(anim_name: String) -> void:
+	if sprite.animation != anim_name or sprite.speed_scale >= 0.0:
+		sprite.play(anim_name, -1.0, true)
 	else:
 		sprite.speed_scale = -1.0

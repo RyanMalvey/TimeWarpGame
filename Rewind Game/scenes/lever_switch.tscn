@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://bkcjuklu3ljat"]
 
 [ext_resource type="Script" uid="uid://cwnvd4hksulji" path="res://scripts/lever_switch.gd" id="1_2m20r"]
+[ext_resource type="AudioStream" uid="uid://fuxr5g872m4y" path="res://assets/lever activate.wav" id="2_mehwv"]
+[ext_resource type="AudioStream" uid="uid://d00g08y1fbnwh" path="res://assets/lever deactivate.wav" id="3_wumk4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2m20r"]
 size = Vector2(2.732051, 13.026281)
@@ -41,3 +43,13 @@ shape = SubResource("RectangleShape2D_awamt")
 position = Vector2(-0.074509904, 0.44570935)
 scale = Vector2(0.1657777, 6.7213373)
 polygon = PackedVector2Array(-8, -2, 8, -2, 8, 0, -8, 0)
+
+[node name="Activate" type="AudioStreamPlayer2D" parent="." unique_id=1981901551]
+stream = ExtResource("2_mehwv")
+volume_db = -5.0
+max_distance = 300.0
+
+[node name="Deactivate" type="AudioStreamPlayer2D" parent="." unique_id=1332104511]
+stream = ExtResource("3_wumk4")
+volume_db = -5.0
+max_distance = 300.0

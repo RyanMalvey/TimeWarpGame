@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c8vb0164ufq2e"
+path="res://.godot/imported/jump land.wav-245df1b570d5fd4556a3e935e57259ca.sample"
+
+[deps]
+
+source_file="res://assets/jump land.wav"
+dest_files=["res://.godot/imported/jump land.wav-245df1b570d5fd4556a3e935e57259ca.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

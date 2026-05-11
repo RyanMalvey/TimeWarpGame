@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bok2g1kbekyob"]
+
+[ext_resource type="Texture2D" uid="uid://csnqa0syyvxfu" path="res://assets/Light Sprite.png" id="1_h6iho"]
+[ext_resource type="Texture2D" uid="uid://681ijdt3bmsb" path="res://assets/short lab light.png" id="2_lfwts"]
+[ext_resource type="PackedScene" uid="uid://bvctnd3m817v8" path="res://scenes/light_hum.tscn" id="3_oserv"]
+
+[node name="ConeLightShort" type="Node2D" unique_id=1233133646]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1507680758]
+texture = ExtResource("1_h6iho")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1139290689]
+shadow_enabled = true
+texture = ExtResource("2_lfwts")
+offset = Vector2(0, 43)
+texture_scale = 0.4
+
+[node name="LightHum" parent="." unique_id=1954476730 instance=ExtResource("3_oserv")]
