@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bok2g1kbekyob" path="res://scenes/ceiling_light_short.tscn" id="13_nmsli"]
 [ext_resource type="Script" uid="uid://c8awhj6bsugt0" path="res://scripts/Hud.gd" id="14_4knja"]
 [ext_resource type="PackedScene" uid="uid://gpkfafnyj141" path="res://scenes/next_level_teleport.tscn" id="14_betor"]
+[ext_resource type="PackedScene" uid="uid://c30d164oa884y" path="res://scenes/teleport_arrive.tscn" id="14_bgw3c"]
 [ext_resource type="PackedScene" uid="uid://e1npdsggr1fc" path="res://scenes/wall_light.tscn" id="14_vjtdm"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_08mmt"]
@@ -654,3 +655,5 @@ position = Vector2(64, -32)
 
 [node name="NextLevelTeleport" parent="." unique_id=102015584 instance=ExtResource("14_betor")]
 position = Vector2(224, -80)
+
+[node name="TeleportArrive" parent="." unique_id=576794674 instance=ExtResource("14_bgw3c")]

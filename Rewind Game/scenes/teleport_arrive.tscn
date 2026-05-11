@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c30d164oa884y"]
+
+[ext_resource type="Script" uid="uid://cl77mvjt6bxoy" path="res://scripts/teleport_arrive.gd" id="1_4rns1"]
+[ext_resource type="AudioStream" uid="uid://dejkfw5qqniyk" path="res://assets/teleport end.wav" id="2_l6u7n"]
+
+[node name="TeleportArrive" type="Node2D" unique_id=576794674]
+z_index = 11
+script = ExtResource("1_4rns1")
+fade_time = 0.5
+sound_volume_db = -9.0
+
+[node name="ArrivalRect" type="ColorRect" parent="." unique_id=576873111]
+offset_left = -8.0
+offset_top = -24.0
+offset_right = 8.0
+color = Color(0.33627835, 0.83799905, 1.0888593, 1)
+
+[node name="TeleportEndSound" type="AudioStreamPlayer2D" parent="." unique_id=88046963]
+stream = ExtResource("2_l6u7n")

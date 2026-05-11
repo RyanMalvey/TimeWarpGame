@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bok2g1kbekyob" path="res://scenes/ceiling_light_short.tscn" id="12_gci8k"]
 [ext_resource type="PackedScene" uid="uid://e1npdsggr1fc" path="res://scenes/wall_light.tscn" id="13_gci8k"]
 [ext_resource type="PackedScene" uid="uid://gpkfafnyj141" path="res://scenes/next_level_teleport.tscn" id="13_gder6"]
+[ext_resource type="PackedScene" uid="uid://c30d164oa884y" path="res://scenes/teleport_arrive.tscn" id="14_gder6"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ij65d"]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -625,6 +626,7 @@ position = Vector2(0, 150)
 shape = SubResource("WorldBoundaryShape2D_v5uil")
 
 [node name="Player" parent="." unique_id=1355783099 instance=ExtResource("4_g5mgy")]
+position = Vector2(8, 0)
 
 [node name="ButtonSwitch" parent="." unique_id=1708443771 node_paths=PackedStringArray("outputs") instance=ExtResource("7_8vr3t")]
 position = Vector2(128, 0)
@@ -675,3 +677,6 @@ position = Vector2(8, -136)
 
 [node name="NextLevelTeleport" parent="." unique_id=102015584 instance=ExtResource("13_gder6")]
 position = Vector2(416, -160)
+
+[node name="TeleportArrive" parent="." unique_id=576794674 instance=ExtResource("14_gder6")]
+position = Vector2(8, 0)

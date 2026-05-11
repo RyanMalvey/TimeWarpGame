@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ctc0t0hgnnlk2" path="res://scenes/killzone.tscn" id="3_p7y1e"]
 [ext_resource type="PackedScene" uid="uid://ci0mj3daomfq6" path="res://scenes/player.tscn" id="4_vndwe"]
 [ext_resource type="PackedScene" uid="uid://chxijryqupyyj" path="res://scenes/autogenerate_background.tscn" id="6_rj5u4"]
+[ext_resource type="PackedScene" uid="uid://c30d164oa884y" path="res://scenes/teleport_arrive.tscn" id="7_x27qk"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_rj5u4"]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -620,3 +621,5 @@ tilemap = NodePath("../TileMap")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=154565449]
 color = Color(0.42792204, 0.48631066, 0.5972646, 1)
+
+[node name="TeleportArrive" parent="." unique_id=576794674 instance=ExtResource("7_x27qk")]

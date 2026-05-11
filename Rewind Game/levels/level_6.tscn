@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://bok2g1kbekyob" path="res://scenes/ceiling_light_short.tscn" id="13_l3m5x"]
 [ext_resource type="PackedScene" uid="uid://e1npdsggr1fc" path="res://scenes/wall_light.tscn" id="14_l3m5x"]
 [ext_resource type="PackedScene" uid="uid://gpkfafnyj141" path="res://scenes/next_level_teleport.tscn" id="14_t207q"]
+[ext_resource type="PackedScene" uid="uid://c30d164oa884y" path="res://scenes/teleport_arrive.tscn" id="15_t207q"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_t207q"]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -688,3 +689,5 @@ position = Vector2(392, -280)
 
 [node name="NextLevelTeleport" parent="." unique_id=102015584 instance=ExtResource("14_t207q")]
 position = Vector2(536, -272)
+
+[node name="TeleportArrive" parent="." unique_id=576794674 instance=ExtResource("15_t207q")]
