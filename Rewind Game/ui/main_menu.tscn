@@ -712,8 +712,6 @@ autoplay = "idle"
 
 [node name="GlitchTitle" parent="." unique_id=696261531 instance=ExtResource("6_p8ri8")]
 position = Vector2(160, 32)
-min_seconds_between_glitches = 5.0
-max_seconds_between_glitches = 10.0
 
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/Settings" to="." method="_on_settings_pressed"]
