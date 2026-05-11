@@ -111,4 +111,4 @@ hframes = 4
 libraries/ = SubResource("AnimationLibrary_pesa5")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=883266814]
-volume_db = -15.0
+bus = &"Menu Static"
